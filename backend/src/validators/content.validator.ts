@@ -18,3 +18,9 @@ export const updateContentSchema = {
     type: Joi.string().valid(...contentTypes),
   }).or("link", "title", "tags", "type"),
 };
+
+export const shareContentSchema = {
+  body: Joi.object({
+    id: Joi.string().required(),
+  })
+}

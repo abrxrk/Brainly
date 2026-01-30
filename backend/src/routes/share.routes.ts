@@ -4,5 +4,5 @@ import { shareContentSchema } from "../validators/content.validator";
 
 export const ShareRoutes = express.Router();
 
-ShareRoutes.post("/share");
-ShareRoutes.get("/share/:id?", validateRequest(shareContentSchema));
+// ShareRoutes.post("/share");
+// ShareRoutes.get("/share/:id?", validateRequest(shareContentSchema));

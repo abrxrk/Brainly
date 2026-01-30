@@ -7,7 +7,7 @@ export const createContentSchema = {
     title: Joi.string().required(),
     tags: Joi.array().items(Joi.string()).required(),
     type: Joi.string().required(),
-  }),
+  }).required(),
 };
 
 export const updateContentSchema = {
@@ -16,11 +16,11 @@ export const updateContentSchema = {
     title: Joi.string(),
     tags: Joi.array().items(Joi.string()),
     type: Joi.string().valid(...contentTypes),
-  }).or("link", "title", "tags", "type"),
+  }).or("link", "title", "tags", "type").required(),
 };
 
 export const shareContentSchema = {
   body: Joi.object({
     id: Joi.string().required(),
-  })
+  }).required()
 }

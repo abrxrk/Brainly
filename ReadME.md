@@ -41,3 +41,7 @@ Think of it as an external memory you can rely on.
 - **Next.js**
 - **Javascript**
 - **Zustand** – state management
+
+## 🌐 Live Backend URL
+
+https://brainly-66t4.onrender.com

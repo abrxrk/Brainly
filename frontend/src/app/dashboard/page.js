@@ -70,6 +70,8 @@ export default function DashboardPage() {
     if (confirm("Delete this content?")) {
       try {
         await deleteContent(id);
+        setSelectedContent(null);
+        setIsEditMode(false);
         toast.success("Content deleted successfully!");
       } catch (err) {
         toast.error("Failed to delete content. Please try again.");

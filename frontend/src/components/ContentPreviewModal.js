@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Edit2, ExternalLink } from "lucide-react";
+import { X, ExternalLink } from "lucide-react";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import { FileText, Image as ImageIcon, Music, Video } from "lucide-react";
@@ -111,10 +111,6 @@ export default function ContentPreviewModal({
         <div className="flex gap-3 pt-4 border-t border-white/10">
           <Button variant="secondary" onClick={onClose} className="flex-1">
             Close
-          </Button>
-          <Button onClick={onEdit} className="flex-1">
-            <Edit2 size={16} />
-            Edit Details
           </Button>
         </div>
       </div>

@@ -7,7 +7,7 @@ export const createShortLink = async (req: Request, res: Response) => {
   //@ts-ignore
   const userId = req.userId;
   try {
-    const existingLink = await Share.findOne(userId);
+    const existingLink = await Share.findOne({userId});
     if (!existingLink) {
       const shortLink = Math.random().toString(36).substring(2, 10);
       const saveLink = await Share.create({

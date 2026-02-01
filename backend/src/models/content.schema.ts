@@ -1,3 +1,4 @@
+import { string } from "joi";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -7,6 +8,8 @@ const ContentSchema = new Schema(
   {
     link: { type: String, required: true },
     title: { type: String, required: true },
+    media: { type: String },
+    mediaId: {type:String} , 
     userId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     tags: { type: [String], required: true },
     type: { type: String, enum: contentTypes, required: true },

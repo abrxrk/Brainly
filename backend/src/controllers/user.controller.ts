@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/user.schema";
 import bcrypt from "bcrypt";
 import { ApiResponse } from "../utils/apiResponse";
-import jwt from "jsonwebtoken"
-
+import jwt from "jsonwebtoken";
 
 export const signup = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -39,15 +38,15 @@ export const login = async (req: Request, res: Response) => {
         .status(404)
         .json({ message: "user not found, please signup..." });
     }
-    const comparePassword = await bcrypt.compare( password , user.password,)
-    const compareUsername = username === user.username
-    if (!comparePassword || !compareUsername) {
-      return res.status(404).json({message:"incorrect credentials"})
+    const comparePassword = await bcrypt.compare(password, user.password);
+    if (!comparePassword) {
+      return res.status(404).json({ message: "incorrect credentials" });
     }
-    const token = jwt.sign({id: user._id} , process.env.SECRET_KEY! )
-    
-    res.status(200).json(new ApiResponse("User logged in successfully..." , token));
-    console.log("logged in succesfully", );
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY!);
+    res
+      .status(200)
+      .json(new ApiResponse("User logged in successfully...", token));
+    console.log("logged in succesfully");
   } catch (error: unknown) {
     res.status(500).json({
       message: "error loggin in",
@@ -57,5 +56,5 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  return res.status(201).json(new ApiResponse("user logged out successfully"))
-}
+  return res.status(201).json(new ApiResponse("user logged out successfully"));
+};

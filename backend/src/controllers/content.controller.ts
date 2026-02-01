@@ -1,17 +1,31 @@
 import { Request, Response } from "express";
 import { Content, contentTypes } from "../models/content.schema";
 import { ApiResponse } from "../utils/apiResponse";
+import { fileUploaderOnClound } from "../utils/cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
 export const createContent = async (req: Request, res: Response) => {
   const { link, title, tags, type } = req.body;
   //@ts-ignore
   const userId = req.userId;
   try {
+    let media: string | null = null;
+    let mediaId: string | null = null;
+    if (req.file) {
+      const filePath = req.file.path;
+      const upload = await fileUploaderOnClound(filePath);
+      //@ts-ignore
+      media = upload.url;
+      //@ts-ignore
+      mediaId = upload.public_id;
+    }
     const content = await Content.create({
       link,
       title,
       tags,
       userId,
+      media,
+      mediaId,
       type,
     });
     res
@@ -45,45 +59,66 @@ export const updateContent = async (req: Request, res: Response) => {
   //@ts-ignore
   const userId = req.userId;
   try {
-    const findContent = await Content.findOne({ _id: id, userId: userId });
+    const findContent = await Content.findOne({ _id: id, userId });
     if (!findContent) {
       return res
         .status(404)
         .json({ message: "content not found or unauthorized" });
     }
-    const updateFields: any = {};
+    let media: string | null = findContent.media ?? null;
+    let mediaId: string | null = findContent.mediaId ?? null;
+    if (req.file) {
+      if (findContent.mediaId) {
+        await cloudinary.uploader.destroy(findContent.mediaId);
+      }
+      const filePath = req.file.path;
+      const upload = await fileUploaderOnClound(filePath);
+      //@ts-ignore
+      media = upload.url;
+      //@ts-ignore
+      mediaId = upload.public_id;
+    }
+    const updateFields: Partial<typeof findContent> = {};
     if (link !== undefined) updateFields.link = link;
     if (title !== undefined) updateFields.title = title;
     if (tags !== undefined) updateFields.tags = tags;
     if (type !== undefined) updateFields.type = type;
-    const updateContent = await Content.findByIdAndUpdate(id, updateFields, {
+    updateFields.media = media;
+    updateFields.mediaId = mediaId;
+    const updatedContent = await Content.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
     res
       .status(200)
-      .json(new ApiResponse("content updated successfully", updateContent));
-    console.log("content- ", updateContent);
-  } catch (error: unknown) {
-    res.status(500).json({ message: "internal server error" });
+      .json(new ApiResponse("content updated successfully", updatedContent));
+  } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "internal server error" });
   }
-}; 
-
+};
 export const deleteContent = async (req: Request, res: Response) => {
-  const { id } = req.params
+  const { id } = req.params;
   //@ts-ignore
-  const userId = req.userId
+  const userId = req.userId;
   try {
-    const findContent = await Content.findOneAndDelete({ _id: id, userId: userId })
+    const findContent = await Content.findOneAndDelete({
+      _id: id,
+      userId: userId,
+    });
     if (!findContent) {
-      return res.status(404).json({ message: "nothing to delete, or unauthorized"})
+      return res
+        .status(404)
+        .json({ message: "nothing to delete, or unauthorized" });
     }
-    res.status(200).json(new ApiResponse("content deleted successfully"))
+    if (findContent.mediaId) {
+      await cloudinary.uploader.destroy(findContent.mediaId);
+    }
+    res.status(200).json(new ApiResponse("content deleted successfully"));
   } catch (error: unknown) {
     res.status(500).json({
       message: "internal server error",
-      error: error
-    })
-	console.error(error);
+      error: error,
+    });
+    console.error(error);
   }
-}
+};

@@ -5,7 +5,7 @@ const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 export const createContentSchema = {
   body: Joi.object({
     title: Joi.string().required(),
-    link: Joi.string(),
+    link: Joi.string().allow("").optional(),
     media: Joi.string(),
     mediaId: Joi.string(),
 
@@ -58,6 +58,6 @@ export const shareContentSchema = {
 
 export const deleteContentSchema = {
   params: Joi.object({
-    id: objectId.required(),
+    id: Joi.string().required(),
   }).required(),
 };

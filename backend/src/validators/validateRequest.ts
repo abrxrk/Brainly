@@ -11,6 +11,31 @@ export const validateRequest =
   (schema: ValidationSchema) =>
   (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Handle multer file upload - add file info to body for validation
+      if (req.file) {
+        req.body.media = req.file.filename; // or req.file.path
+        req.body.mediaId = req.file.filename;
+      }
+
+      // Parse JSON strings in body (from FormData)
+      if (req.body) {
+        Object.keys(req.body).forEach((key) => {
+          if (typeof req.body[key] === "string") {
+            try {
+              // Try to parse if it looks like JSON
+              if (
+                req.body[key].startsWith("[") ||
+                req.body[key].startsWith("{")
+              ) {
+                req.body[key] = JSON.parse(req.body[key]);
+              }
+            } catch (e) {
+              // If parsing fails, keep as string
+            }
+          }
+        });
+      }
+
       // Validate body
       if (schema.body) {
         const { error, value } = schema.body.validate(req.body, {
@@ -24,15 +49,8 @@ export const validateRequest =
       }
 
       // Validate params or query (frontend-agnostic)
-      if (schema.params || schema.query) {
-        const combined = {
-          ...req.params,
-          ...req.query,
-        };
-
-        const validator = schema.params || schema.query;
-
-        const { error, value } = validator!.validate(combined, {
+      if (schema.params) {
+        const { error, value } = schema.params.validate(req.params, {
           abortEarly: false,
           stripUnknown: true,
         });
@@ -40,15 +58,25 @@ export const validateRequest =
         if (error) throw error;
 
         req.params = value;
-        req.query = value;
+      }
+
+      if (schema.query) {
+        const { error, value } = schema.query.validate(req.query, {
+          abortEarly: false,
+          stripUnknown: true,
+        });
+
+        if (error) throw error;
+
+        // Can't assign to req.query directly, it's read-only
+        Object.assign(req.query, value);
       }
 
       next();
     } catch (err: any) {
       return res.status(400).json({
         success: false,
-        message: "Validation failed",
-        errors: err.details?.map((d: any) => d.message),
+        message: err.message || "Validation failed",
       });
     }
   };

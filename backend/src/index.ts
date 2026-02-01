@@ -1,15 +1,14 @@
-import express, { Request, Response } from "express";
 import dotenv from "dotenv";
+import express, { Request, Response } from "express";
 import { connectDb } from "./utils/db";
 import { UserRoutes } from "./routes/user.routes";
 import { ContentRoutes } from "./routes/content.routes";
 import { ShareRoutes } from "./routes/share.routes";
 import cors from "cors";
 
-
+dotenv.config();
 const app = express();
 app.use(cors());
-dotenv.config();
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {

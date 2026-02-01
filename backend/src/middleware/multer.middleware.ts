@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-const tempDir = "./public/temp";
+const tempDir = path.join(process.cwd(), "public", "temp");
 
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
@@ -21,16 +21,9 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
-  const allowedTypes = [
-    "image/",
-    "video/",
-    "audio/",
-    "application/pdf",
-  ];
+  const allowedTypes = ["image/", "video/", "audio/", "application/pdf"];
 
-  const isAllowed = allowedTypes.some(type =>
-    file.mimetype.startsWith(type)
-  );
+  const isAllowed = allowedTypes.some((type) => file.mimetype.startsWith(type));
 
   if (!isAllowed) {
     cb(new Error("Unsupported file type"));

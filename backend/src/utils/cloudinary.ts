@@ -10,10 +10,11 @@ cloudinary.config({
 export const fileUploaderOnClound = async (filePath: string) => {
   try {
     if (!filePath) return null;
-    const uploadedFile = cloudinary.uploader.upload(filePath, {
+    const uploadedFile = await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
     });
     fs.unlinkSync(filePath);
+    console.log("File deleted:", filePath);
     return uploadedFile;
   } catch (error: unknown) {
     fs.unlinkSync(filePath);

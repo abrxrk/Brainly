@@ -6,7 +6,7 @@ export const contentTypes = ["image", "video", "article", "audio"];
 
 const ContentSchema = new Schema(
   {
-    link: { type: String, required: true },
+    link: { type: String },
     title: { type: String, required: true },
     media: { type: String },
     mediaId: {type:String} , 

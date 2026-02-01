@@ -52,7 +52,7 @@ export const updateContentSchema = {
 
 export const shareContentSchema = {
   params: Joi.object({
-    id: objectId.required(),
+    id: Joi.string().required(),
   }).required(),
 };
 

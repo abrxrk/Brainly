@@ -9,6 +9,6 @@ export const ShareRoutes = express.Router();
 ShareRoutes.post("/share", auth, createShortLink);
 ShareRoutes.get(
   "/share/:id",
-  validateRequest(shareContentSchema),
+  // validateRequest(shareContentSchema),
   getShortLink,
 );

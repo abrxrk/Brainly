@@ -9,9 +9,13 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({message:"server is up and running "})
-})
+app.get("/", (req: Request, res: Response) => {
+  res.json({ message: "server is up and running " });
+});
+//health checkup point for uptime
+app.get("/health", (req: Request, res: Response) => {
+  res.status(200).json({ message: "health ok" });
+});
 app.use("/api/v1", UserRoutes);
 app.use("/api/v1", ContentRoutes);
 app.use("/api/v1/brain", ShareRoutes);

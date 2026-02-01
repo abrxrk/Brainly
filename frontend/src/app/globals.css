@@ -10,6 +10,23 @@
   --accent: #e8eaee;
   --accent-contrast: #0b0c0f;
   --footer-mark: linear-gradient(180deg, #1b1f27 0%, #3a424f 100%);
+  --navbar-bg: rgba(0, 0, 0, 0.4);
+  --navbar-border: rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f8f8f8;
+    --fg: #1a1a1a;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --ring: rgba(0, 0, 0, 0.08);
+    --accent: #1a1a1a;
+    --accent-contrast: #f8f8f8;
+    --navbar-bg: rgba(255, 255, 255, 0.7);
+    --navbar-border: rgba(0, 0, 0, 0.1);
+  }
 }
 
 @theme inline {
@@ -19,7 +36,7 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light dark;
   }
 
   body {

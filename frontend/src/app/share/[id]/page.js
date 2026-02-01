@@ -71,8 +71,14 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/40 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
+      <header
+        className="sticky top-0 z-50 border-b"
+        style={{
+          borderColor: "var(--navbar-border)",
+          backgroundColor: "var(--navbar-bg)",
+        }}
+      >
+        <div className="backdrop-blur mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
           <BackButton />
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-zinc-900 shadow-sm">

@@ -4,10 +4,11 @@ import { api } from "@/lib/api";
 
 export const useAuthStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      hydrated: false,
 
       login: async (credentials) => {
         const response = await api.login(credentials);
@@ -33,16 +34,19 @@ export const useAuthStore = create(
         }
       },
 
-      checkAuth: () => {
-        const token = localStorage.getItem("brainly-token");
-        if (token) {
-          set({ token, isAuthenticated: true });
-        }
-      },
+      setHydrated: () => set({ hydrated: true }),
     }),
     {
       name: "brainly-auth",
-      partialize: (state) => ({ isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        token: state.token,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setHydrated();
+        }
+      },
     },
   ),
 );

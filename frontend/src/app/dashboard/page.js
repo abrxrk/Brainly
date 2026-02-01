@@ -21,6 +21,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
 import Button from "@/components/Button";
 import CreateContentModal from "@/components/CreateContentModal";
+import ContentPreviewModal from "@/components/ContentPreviewModal";
 import ShareModal from "@/components/ShareModal";
 import { formatDate } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ const iconMap = {
 export default function DashboardPage() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hydrated = useAuthStore((state) => state.hydrated);
   const logout = useAuthStore((state) => state.logout);
   const {
     contents,
@@ -47,14 +49,17 @@ export default function DashboardPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [currentShareLink, setCurrentShareLink] = useState(null);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
+    if (!hydrated) return; // Wait for store to hydrate
     if (!isAuthenticated) {
       router.push("/auth/login");
       return;
     }
     fetchContents();
-  }, [isAuthenticated, router, fetchContents]);
+  }, [hydrated, isAuthenticated, router, fetchContents]);
 
   const handleLogout = async () => {
     await logout();
@@ -82,6 +87,14 @@ export default function DashboardPage() {
       toast.error("Failed to create share link. Please try again.");
     }
   };
+
+  if (!hydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
+      </div>
+    );
+  }
 
   if (loading && contents.length === 0) {
     return (
@@ -157,7 +170,8 @@ export default function DashboardPage() {
               return (
                 <div
                   key={content._id}
-                  className="surface surface-hover rounded-3xl p-6 space-y-4"
+                  className="surface surface-hover rounded-3xl p-6 space-y-4 cursor-pointer transition-all"
+                  onClick={() => setSelectedContent(content)}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -223,6 +237,20 @@ export default function DashboardPage() {
       <CreateContentModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+      <ContentPreviewModal
+        isOpen={!!selectedContent && !isEditMode}
+        onClose={() => setSelectedContent(null)}
+        content={selectedContent}
+        onEdit={() => setIsEditMode(true)}
+      />
+      <CreateContentModal
+        isOpen={!!selectedContent && isEditMode}
+        onClose={() => {
+          setIsEditMode(false);
+          setSelectedContent(null);
+        }}
+        editContent={selectedContent}
       />
       <ShareModal
         isOpen={isShareModalOpen}

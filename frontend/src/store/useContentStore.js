@@ -22,9 +22,21 @@ export const useContentStore = create((set, get) => ({
     try {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
+        // Skip link if type is image/video/audio and link is empty
+        if (
+          key === "link" &&
+          ["image", "video", "audio"].includes(data.type) &&
+          !data[key]
+        ) {
+          return;
+        }
         if (key === "tags") {
           formData.append(key, JSON.stringify(data[key]));
-        } else if (data[key] !== null && data[key] !== undefined) {
+        } else if (
+          data[key] !== null &&
+          data[key] !== undefined &&
+          data[key] !== ""
+        ) {
           formData.append(key, data[key]);
         }
       });
@@ -44,9 +56,21 @@ export const useContentStore = create((set, get) => ({
     try {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
+        // Skip link if type is image/video/audio and link is empty
+        if (
+          key === "link" &&
+          ["image", "video", "audio"].includes(data.type) &&
+          !data[key]
+        ) {
+          return;
+        }
         if (key === "tags") {
           formData.append(key, JSON.stringify(data[key]));
-        } else if (data[key] !== null && data[key] !== undefined) {
+        } else if (
+          data[key] !== null &&
+          data[key] !== undefined &&
+          data[key] !== ""
+        ) {
           formData.append(key, data[key]);
         }
       });

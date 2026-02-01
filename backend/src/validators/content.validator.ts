@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { contentTypes } from "../models/content.schema";
 
-const objectId = Joi.string().hex().length(24);
+const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 export const createContentSchema = {
   body: Joi.object({
     title: Joi.string().required(),

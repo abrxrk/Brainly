@@ -6,6 +6,7 @@ import { ContentRoutes } from "./routes/content.routes";
 import { ShareRoutes } from "./routes/share.routes";
 import cors from "cors";
 
+
 const app = express();
 app.use(cors());
 dotenv.config();

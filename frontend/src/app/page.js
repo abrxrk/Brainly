@@ -1,3 +1,7 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -10,6 +14,7 @@ import {
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const steps = [
   {
@@ -32,6 +37,24 @@ const steps = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+  const { isAuthenticated, hydrated } = useAuthStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleStartCapturing = () => {
+    if (!hydrated || !isMounted) return;
+
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth/signup");
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 border-b border-black/5 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-black/40">
@@ -57,12 +80,13 @@ export default function Home() {
             </a>
           </nav>
           <div className="flex items-center gap-3">
-            <Link href="/auth/signup">
-              <button className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 shadow-sm transition hover:translate-y-[-1px] hover:shadow-md">
-                Start capturing
-                <ArrowRight size={16} />
-              </button>
-            </Link>
+            <button
+              onClick={handleStartCapturing}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-900 shadow-sm transition hover:translate-y-[-1px] hover:shadow-md"
+            >
+              Start capturing
+              <ArrowRight size={16} />
+            </button>
           </div>
         </div>
       </header>
@@ -75,12 +99,13 @@ export default function Home() {
                 Your personal knowledge hub for everything.
               </h1>
               <div className="flex flex-wrap gap-3">
-                <Link href="/auth/signup">
-                  <button className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-zinc-900 shadow-sm transition hover:translate-y-[-1px] hover:shadow-md">
-                    Launch your hub
-                    <ArrowRight size={16} />
-                  </button>
-                </Link>
+                <button
+                  onClick={handleStartCapturing}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium text-zinc-900 shadow-sm transition hover:translate-y-[-1px] hover:shadow-md"
+                >
+                  Launch your hub
+                  <ArrowRight size={16} />
+                </button>
               </div>
               <div className="grid grid-cols-3 gap-4 pt-6 text-sm">
                 {[
